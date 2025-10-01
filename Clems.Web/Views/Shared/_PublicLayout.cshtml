@@ -1,0 +1,20 @@
+﻿@{
+    Layout = null; // Prevent recursive layout calls
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Clems Wallet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen flex items-center justify-center bg-gray-100">
+<div class="w-full max-w-md bg-white shadow-lg rounded-xl p-8">
+    @RenderBody()
+</div>
+
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clems.Web", "Clems.Web\Clems.Web.csproj", "{B5850812-274F-4B32-BB84-C81D1CF555D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clems.Domain", "Clems.Domain\Clems.Domain.csproj", "{E7DFC7EC-98E4-42F2-894C-CA1F61E6A6A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clems.Infrastructure", "Clems.Infrastructure\Clems.Infrastructure.csproj", "{299C8F94-0274-4804-899D-7B82F4148E87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel", "SharedKernel\SharedKernel.csproj", "{1BBB4CD0-6161-487D-B961-CCEC33723DAD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clems.Application", "Clems.Application\Clems.Application.csproj", "{F8C522F0-1063-43B2-83A6-518129DB694C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interface", "Interface", "{DDA7B69E-C0DD-471B-8D88-75A56264E422}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App", "App", "{152755FD-1325-4C07-9964-F69E87257EE0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B5850812-274F-4B32-BB84-C81D1CF555D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5850812-274F-4B32-BB84-C81D1CF555D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5850812-274F-4B32-BB84-C81D1CF555D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5850812-274F-4B32-BB84-C81D1CF555D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7DFC7EC-98E4-42F2-894C-CA1F61E6A6A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7DFC7EC-98E4-42F2-894C-CA1F61E6A6A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7DFC7EC-98E4-42F2-894C-CA1F61E6A6A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7DFC7EC-98E4-42F2-894C-CA1F61E6A6A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{299C8F94-0274-4804-899D-7B82F4148E87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{299C8F94-0274-4804-899D-7B82F4148E87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{299C8F94-0274-4804-899D-7B82F4148E87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{299C8F94-0274-4804-899D-7B82F4148E87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BBB4CD0-6161-487D-B961-CCEC33723DAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BBB4CD0-6161-487D-B961-CCEC33723DAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BBB4CD0-6161-487D-B961-CCEC33723DAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BBB4CD0-6161-487D-B961-CCEC33723DAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8C522F0-1063-43B2-83A6-518129DB694C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8C522F0-1063-43B2-83A6-518129DB694C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8C522F0-1063-43B2-83A6-518129DB694C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8C522F0-1063-43B2-83A6-518129DB694C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B5850812-274F-4B32-BB84-C81D1CF555D3} = {DDA7B69E-C0DD-471B-8D88-75A56264E422}
+		{F8C522F0-1063-43B2-83A6-518129DB694C} = {152755FD-1325-4C07-9964-F69E87257EE0}
+		{E7DFC7EC-98E4-42F2-894C-CA1F61E6A6A6} = {152755FD-1325-4C07-9964-F69E87257EE0}
+		{299C8F94-0274-4804-899D-7B82F4148E87} = {152755FD-1325-4C07-9964-F69E87257EE0}
+	EndGlobalSection
+EndGlobal

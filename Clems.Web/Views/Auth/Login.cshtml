@@ -1,0 +1,52 @@
+﻿@model Clems.Web.Models.LoginViewModel
+@{
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+    ViewData["Title"] = "Login";
+}
+
+<section class="flex items-center justify-center">
+    <div class="max-w-md w-full">
+        <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">Login</h1>
+
+        <form asp-action="Login" method="post" novalidate class="space-y-6">
+
+
+            <!-- Email -->
+            <div>
+                <label asp-for="Email" class="block text-sm font-medium text-gray-700"></label>
+                <input asp-for="Email" class="mt-1 block w-full rounded-sm border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2" />
+                <span asp-validation-for="Email" class="text-red-500 text-sm"></span>
+            </div>
+
+            <!-- Password -->
+            <div>
+                <label asp-for="Password" class="block text-sm font-medium text-gray-700"></label>
+                <input asp-for="Password" type="password" class="mt-1 block w-full rounded-sm border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2" />
+                <span asp-validation-for="Password" class="text-red-500 text-sm"></span>
+            </div>
+
+            <!-- Remember Me -->
+            <div class="flex items-center">
+                <input asp-for="RememberMe" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
+                <label asp-for="RememberMe" class="ml-2 block text-sm text-gray-700">Remember Me</label>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition">
+                Sign in
+            </button>
+            
+            <div asp-validation-summary="ModelOnly" class="text-red-500 text-sm mb-4 w-full"></div>
+        </form>
+
+        <!-- Register link -->
+        <p class="mt-6 text-center text-sm text-gray-600">
+            Don't have an account?
+            <a asp-action="Register" class="text-blue-600 hover:text-blue-800 font-medium">Register</a>
+        </p>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
