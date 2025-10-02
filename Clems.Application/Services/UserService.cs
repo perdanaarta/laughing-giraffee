@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SharedKernel.Abstraction;
+using SharedKernel.Mediator;
 
 namespace Clems.Application.Services;
 
@@ -27,10 +28,8 @@ public class UserService(
 
         var res = await base.CreateAsync(user, password);
 
-        if (res.Succeeded)
-        {
-            await mediator.PublishAsync(new UserCreatedEvent(user.Id));
-        }
+        if (res.Succeeded) await mediator.PublishAsync(new UserCreated(user.Id));
+
 
         return res;
     }

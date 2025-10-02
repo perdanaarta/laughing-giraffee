@@ -1,188 +1,347 @@
-﻿@{
+﻿@model DashboardViewModel
+@{
     ViewData["Title"] = "Dashboard";
 }
 
-@section Wallets {
-    @foreach (var wallet in Model)
-    {
-        <li class="cursor-pointer px-3 py-2.5 rounded-lg hover:bg-gray-100 transition wallet-item"
-            data-wallet-id="@wallet.Id"
-            role="button"
-            tabindex="0">
-            <div class="flex justify-between items-center">
-                <span class="font-medium text-gray-900">@wallet.Name</span>
-                <span class="text-sm text-gray-600">@wallet.Balance:C</span>
-            </div>
-        </li>
-    }
-}
+<div id="walletsDebtsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Wallets -->
+    <section class="bg-white shadow rounded-2xl p-5">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-700">Wallets</h2>
+            <button class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+                    onclick="addWallet()">
+                + Add Wallet
+            </button>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+            @foreach (var wallet in Model.Wallets)
+            {
+                <div class="wallet-card relative bg-blue-50 p-4 rounded-xl shadow-sm cursor-pointer transition hover:shadow-md"
+                     data-id="@wallet.Id"
+                     data-type="Wallet"
+                     onclick="selectAccount('@wallet.Id','Wallet', this)">
+                 
+                    <button class="absolute top-2 left-2 text-gray-400 hover:text-blue-500"
+                            onclick="editAccount('@wallet.Id','Wallet','@wallet.Name'); event.stopPropagation();">
+                        ✎
+                    </button>
+                    
+                    <!-- Remove button -->
+                    <button class="absolute top-2 right-2 text-gray-400 hover:text-red-500"
+                            onclick="removeWallet('@wallet.Id'); event.stopPropagation();">
+                        &times;
+                    </button>
 
-<!-- Add Wallet Modal -->
-<div id="wallet-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-    <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-6">
-        <h2 class="text-xl font-bold text-gray-900 mb-4">New Wallet</h2>
-        <form id="wallet-form" class="space-y-4">
-            <div>
-                <label for="wallet-name" class="block text-sm font-medium text-gray-700 mb-1">Wallet Name</label>
-                <input type="text" id="wallet-name" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition" required>
+                    <h3 class="text-base font-medium text-gray-800">@wallet.Name</h3>
+                    <p class="text-2xl font-bold text-blue-700">@wallet.Balance.ToString("C")</p>
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- Debts -->
+    <section class="bg-white shadow rounded-2xl p-5">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-700">Debts</h2>
+            <button class="px-3 py-1.5 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700"
+                    onclick="addDebt()">
+                + Add Debt
+            </button>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+            @foreach (var debt in Model.Debts)
+            {
+                <div class="wallet-card relative bg-red-50 p-4 rounded-xl shadow-sm cursor-pointer transition hover:shadow-md"
+                     data-id="@debt.Id"
+                     data-type="Debt"
+                     onclick="selectAccount('@debt.Id','Debt', this)">
+                 
+                    <button class="absolute top-2 left-2 text-gray-400 hover:text-blue-500"
+                            onclick="editAccount('@debt.Id','Debt','@debt.Name'); event.stopPropagation();">
+                        ✎
+                    </button>
+                    
+                    <!-- Remove button -->
+                    <button class="absolute top-2 right-2 text-gray-400 hover:text-red-500"
+                            onclick="removeDebt('@debt.Id'); event.stopPropagation();">
+                        &times;
+                    </button>
+
+                    <h3 class="text-base font-medium text-gray-800">@debt.Name</h3>
+                    <p class="text-2xl font-bold text-red-600">@debt.Amount.ToString("C")</p>
+                </div>
+            }
+        </div>
+    </section>
+</div>
+
+<!-- Add/Edit Account Modal -->
+<div id="accountModal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-2xl shadow-lg w-full max-w-md p-6">
+        <h2 id="accountModalTitle" class="text-lg font-semibold text-gray-700 mb-4">Add Account</h2>
+        
+        <form id="accountForm" onsubmit="submitAccount(event)">
+            <!-- Hidden inputs for type and ID -->
+            <input type="hidden" id="accountId" name="accountId" />
+            <input type="hidden" id="accountType" name="accountType" />
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-600">Name</label>
+                <input type="text" id="accountName" name="name" 
+                       class="w-full mt-1 p-2 border rounded-lg focus:ring focus:ring-blue-200" required />
             </div>
-            <div>
-                <label for="wallet-initial-balance" class="block text-sm font-medium text-gray-700 mb-1">Initial Balance</label>
-                <input type="number" id="wallet-initial-balance" step="0.01" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition">
+
+            <div class="mb-4" id="accountBalanceWrapper">
+                <label class="block text-sm font-medium text-gray-600">Initial Balance/Amount</label>
+                <input type="number" step="0.01" id="accountBalance" name="balance" 
+                       class="w-full mt-1 p-2 border rounded-lg focus:ring focus:ring-blue-200" />
             </div>
-            <div class="flex justify-end gap-2 pt-2">
-                <button type="button" id="close-wallet-modal"
-                    class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
-                    Cancel
-                </button>
-                <button type="submit"
-                    class="px-4 py-2 bg-success-500 text-white rounded-lg hover:bg-success-600 focus:outline-none focus:ring-2 focus:ring-success-500 focus:ring-offset-2 transition">
-                    Create
-                </button>
+
+            <div class="flex justify-end gap-2">
+                <button type="button" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300" 
+                        onclick="closeAccountModal()">Cancel</button>
+                <button type="submit" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">Save</button>
             </div>
         </form>
     </div>
 </div>
 
-<div id="wallet-history-container" class="mt-6">
-    <p class="text-gray-500 italic">Select a wallet to see its transaction history.</p>
-</div>
+<!-- Transactions -->
+<section id="historyPanel" class="mt-8">
+    <div class="bg-white shadow rounded-2xl p-6">
+        <div id="transactionRows" class="space-y-4 text-gray-500">
+            <p>Select a wallet or debt to view its history.</p>
+        </div>
+    </div>
+</section>
 
-<!-- Transaction Modal -->
-<div id="transaction-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-    <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-6">
-        <h2 class="text-xl font-bold text-gray-900 mb-4">New Transaction</h2>
-        <form id="transaction-form" class="space-y-4">
-            <input type="hidden" name="walletId" id="walletId">
-            <div>
-                <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Type</label>
-                <select name="type" id="type" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition">
-                    <option value="Deposit">Deposit</option>
-                    <option value="Withdraw">Withdraw</option>
+<!-- Add Transaction Modal -->
+<div id="transactionModal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-2xl shadow-lg w-full max-w-md p-6">
+        <h2 id="transactionModalTitle" class="text-lg font-semibold text-gray-700 mb-4">Add Transaction</h2>
+        
+        <form id="transactionForm" onsubmit="submitTransaction(event)">
+            <input type="hidden" id="transactionAccountId" />
+            <input type="hidden" id="transactionAccountType" />
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-600">Action</label>
+                <select id="transactionAction" class="w-full mt-1 p-2 border rounded-lg focus:ring focus:ring-blue-200" required>
+                    <!-- Options will be populated dynamically -->
                 </select>
             </div>
-            <div>
-                <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Amount</label>
-                <input type="number" name="amount" id="amount" step="0.01" required
-                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition">
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-600">Amount</label>
+                <input type="number" step="0.01" id="transactionAmount" name="amount"
+                       class="w-full mt-1 p-2 border rounded-lg focus:ring focus:ring-blue-200" required />
             </div>
-            <div>
-                <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                <input type="text" name="description" id="description" required
-                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition">
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-600">Description</label>
+                <input type="text" id="transactionDescription" name="description"
+                       class="w-full mt-1 p-2 border rounded-lg focus:ring focus:ring-blue-200" required />
             </div>
-            <div class="flex justify-end gap-2 pt-2">
-                <button type="button" id="close-modal"
-                    class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
-                    Cancel
-                </button>
-                <button type="submit"
-                    class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition">
-                    Save
-                </button>
+
+            <div class="flex justify-end gap-2">
+                <button type="button" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300"
+                        onclick="closeTransactionModal()">Cancel</button>
+                <button type="submit" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">Add</button>
             </div>
         </form>
     </div>
 </div>
+
+
 
 @section Scripts {
 <script>
-    let selectedWalletId = null;
+    let activeCard = null;
 
-    function makeWalletClickable(li) {
-        const handleClick = async () => {
-            selectedWalletId = li.dataset.walletId;
-            document.getElementById('walletId').value = selectedWalletId;
+    async function selectAccount(accountId, type, element) {
+        if (activeCard) activeCard.classList.remove("ring-2", "ring-blue-500");
+        element.classList.add("ring-2", "ring-blue-500");
+        activeCard = element;
 
-            try {
-                const response = await axios.get(`/Home/WalletHistory?walletId=${selectedWalletId}`);
-                document.getElementById('wallet-history-container').innerHTML = response.data;
-            } catch (err) {
-                document.getElementById('wallet-history-container').innerHTML = '<p class="text-red-500">Failed to load history.</p>';
-            }
-        };
-
-        li.addEventListener('click', handleClick);
-        li.addEventListener('keydown', e => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                handleClick();
-            }
-        });
+        let response = await fetch(`/Transaction/History?accountId=${accountId}`);
+        let html = await response.text();
+        document.getElementById("transactionRows").innerHTML = html;
+        element.querySelector('p').innerText = data.balance.toLocaleString(undefined, {style:'currency',currency:'USD'});
     }
 
-    // Initialize existing wallets
-    document.querySelectorAll('.wallet-item').forEach(makeWalletClickable);
+    // --- Modal control ---
+    function openAccountModal(type, accountId = null, currentName = "") {
+        const modal = document.getElementById("accountModal");
+        const title = document.getElementById("accountModalTitle");
+        const nameInput = document.getElementById("accountName");
+        const balanceWrapper = document.getElementById("accountBalanceWrapper");
+        const balanceInput = document.getElementById("accountBalance");
 
-    // New Transaction Button
-    document.getElementById('new-transaction-btn')?.addEventListener('click', () => {
-        if (!selectedWalletId) {
-            alert('Please select a wallet first.');
+        document.getElementById("accountId").value = accountId ?? "";
+        document.getElementById("accountType").value = type;
+        title.innerText = accountId ? `Edit ${type}` : `Add ${type}`;
+        nameInput.value = currentName || "";
+
+        // Show balance input only for new accounts
+        balanceWrapper.style.display = accountId ? "none" : "block";
+        balanceInput.value = "";
+
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+    }
+
+    function closeAccountModal() {
+        const modal = document.getElementById("accountModal");
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+    }
+
+    // --- Add/Remove handlers ---
+    function addWallet() { openAccountModal("Wallet"); }
+    function addDebt() { openAccountModal("Debt"); }
+    
+
+    async function submitAccount(e) {
+        e.preventDefault();
+
+        const accountId = document.getElementById("accountId").value;
+        const type = document.getElementById("accountType").value;
+        const name = document.getElementById("accountName").value;
+        const balanceInput = document.getElementById("accountBalance");
+        const balance = balanceInput && balanceInput.value ? parseFloat(balanceInput.value) : 0;
+
+        let url, body;
+
+        if (accountId) {
+            // Update existing account
+            url = type === "Wallet" ? `/Wallet/Update/${accountId}` : `/Debt/Update/${accountId}`;
+            body = JSON.stringify({ name });
+        } else {
+            // Create new account
+            url = type === "Wallet" ? "/Wallet/Create" : "/Debt/Create";
+            body = JSON.stringify({ name, balance });
+        }
+        
+        console.log(url);
+
+        const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body
+        });
+
+        if (res.ok) {
+            closeAccountModal();
+            await refreshAccounts();
+        } else {
+            alert("Failed to save account.");
+        }
+    }
+
+    // --- Add/Remove handlers ---
+    function removeWallet(walletId) {
+        if (confirm("Are you sure you want to remove this wallet?")) {
+            fetch(`/Wallet/Delete/${walletId}`, { method: "POST" })
+                .then(() => location.reload());
+        }
+    }
+
+    function removeDebt(debtId) {
+        if (confirm("Are you sure you want to remove this debt?")) {
+            fetch(`/Debt/Delete/${debtId}`, { method: "POST" })
+                .then(() => location.reload());
+        }
+    }
+
+    function addTransaction() {
+        if (!activeCard) {
+            alert("Please select a wallet or debt first!");
             return;
         }
-        document.getElementById('transaction-modal').classList.remove('hidden');
-    });
 
-    // Close modals
-    document.getElementById('close-modal')?.addEventListener('click', () => {
-        document.getElementById('transaction-modal').classList.add('hidden');
-    });
+        const accountId = activeCard.dataset.id;
+        const accountType = activeCard.dataset.type;
 
-    document.getElementById('close-wallet-modal')?.addEventListener('click', () => {
-        document.getElementById('wallet-modal').classList.add('hidden');
-    });
+        // Set hidden inputs
+        document.getElementById("transactionAccountId").value = accountId;
+        document.getElementById("transactionAccountType").value = accountType;
+        document.getElementById("transactionAmount").value = "";
+        document.getElementById("transactionDescription").value = "";
 
-    // Submit Transaction
-    document.getElementById('transaction-form')?.addEventListener('submit', async e => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        try {
-            const response = await axios.post('/Home/AddTransaction', formData);
-            document.getElementById('wallet-history-container').innerHTML = response.data;
-            document.getElementById('transaction-modal').classList.add('hidden');
-            e.target.reset();
-        } catch (err) {
-            alert('Failed to save transaction.');
+        // Populate action dropdown dynamically
+        const actionSelect = document.getElementById("transactionAction");
+        actionSelect.innerHTML = "";
+        if (accountType === "Wallet") {
+            actionSelect.innerHTML += '<option value="Deposit">Deposit</option>';
+            actionSelect.innerHTML += '<option value="Withdraw">Withdraw</option>';
+        } else if (accountType === "Debt") {
+            actionSelect.innerHTML += '<option value="Borrow">Borrow</option>';
+            actionSelect.innerHTML += '<option value="Repay">Repay</option>';
         }
-    });
 
-    // Open Add Wallet Modal
-    document.getElementById('add-wallet-btn')?.addEventListener('click', () => {
-        document.getElementById('wallet-modal').classList.remove('hidden');
-    });
+        // Show modal
+        document.getElementById("transactionModal").classList.remove("hidden");
+        document.getElementById("transactionModal").classList.add("flex");
+    }
 
-    // Submit New Wallet
-    document.getElementById('wallet-form')?.addEventListener('submit', async e => {
+    async function submitTransaction(e) {
         e.preventDefault();
-        const name = document.getElementById('wallet-name').value.trim();
-        const balance = parseFloat(document.getElementById('wallet-initial-balance').value) || 0;
 
-        if (!name) return;
+        const accountId = document.getElementById("transactionAccountId").value;
+        const accountType = document.getElementById("transactionAccountType").value;
+        const action = document.getElementById("transactionAction").value;
+        const amount = parseFloat(document.getElementById("transactionAmount").value);
+        const description = document.getElementById("transactionDescription").value;
 
-        try {
-            const response = await axios.post('/Home/CreateWallet', { Name: name, InitialBalance: balance });
-            const wallet = response.data;
+        let url, payload;
 
-            const li = document.createElement('li');
-            li.className = 'cursor-pointer px-3 py-2.5 rounded-lg hover:bg-gray-100 transition wallet-item';
-            li.dataset.walletId = wallet.id;
-            li.setAttribute('role', 'button');
-            li.setAttribute('tabindex', '0');
-            li.innerHTML = `
-                <div class="flex justify-between items-center">
-                    <span class="font-medium text-gray-900">${wallet.name}</span>
-                    <span class="text-sm text-gray-600">$${parseFloat(wallet.balance).toFixed(2)}</span>
-                </div>
-            `;
-
-            document.getElementById('wallet-list').appendChild(li);
-            makeWalletClickable(li);
-
-            document.getElementById('wallet-modal').classList.add('hidden');
-            e.target.reset();
-        } catch (err) {
-            alert('Failed to create wallet.');
+        if (accountType === "Wallet") {
+            url = action === "Deposit" ? "/Wallet/Deposit" : "/Wallet/Withdraw";
+            payload = { walletId: accountId, amount, description };
+        } else if (accountType === "Debt") {
+            url = action === "Borrow" ? "/Debt/Borrow" : "/Debt/Repay";
+            payload = { debtId: accountId, amount, description };
         }
-    });
+
+        const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            // Refresh transaction history for active card
+            await selectAccount(accountId, accountType, activeCard);
+            closeTransactionModal();
+        } else {
+            alert("Failed to add transaction.");
+        }
+
+        await selectAccount(accountId, accountType, activeCard);
+        await refreshAccounts();
+    }
+
+    function closeTransactionModal() {
+        document.getElementById("transactionModal").classList.add("hidden");
+        document.getElementById("transactionModal").classList.remove("flex");
+    }
+
+    async function refreshAccounts() {
+        const response = await fetch("AccountsPartial");
+        const html = await response.text();
+        document.getElementById("walletsDebtsContainer").innerHTML = html;
+    }
+
+    function editAccount(accountId, type, currentName) {
+        openAccountModal(type, accountId, currentName);
+        
+        document.getElementById("accountId").value = accountId;
+        document.getElementById("accountType").value = type;
+        document.getElementById("accountModalTitle").innerText = `Edit ${type}`;
+        document.getElementById("accountName").value = currentName;
+        document.getElementById("accountBalance").parentElement.style.display = 'none'; // hide balance input for edit
+        document.getElementById("accountModal").classList.remove("hidden");
+        document.getElementById("accountModal").classList.add("flex");
+    }
 </script>
 }

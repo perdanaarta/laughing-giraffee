@@ -2,92 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Clems Finance</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Clems Wallet</title>
-
-    <!-- Modern Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        primary: {
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                        },
-                        success: {
-                            500: '#10b981',
-                            600: '#059669',
-                        },
-                        danger: {
-                            500: '#ef4444',
-                            600: '#dc2626',
-                        },
-                    }
-                }
-            }
-        }
-    </script>
-
-    <style>
-        body {
-            font-feature-settings: "liga" 1, "calt" 1;
-        }
-    </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
-    <div class="min-h-screen flex flex-col md:flex-row">
-        <!-- Sidebar -->
-        <aside class="w-full md:w-64 bg-white border-r border-gray-200 p-4 flex flex-col h-screen md:sticky md:top-0">
-            <div class="mb-6">
-                <h2 class="text-lg font-semibold text-gray-900">My Wallets</h2>
-            </div>
+<body class="bg-gray-50 font-sans min-h-screen flex flex-col">
 
-            <div class="flex-1 overflow-y-auto space-y-2">
-                <button id="add-wallet-btn"
-                    class="w-full mb-3 flex items-center justify-center gap-2 px-3 py-2 bg-success-500 text-white text-sm font-medium rounded-lg hover:bg-success-600 focus:outline-none focus:ring-2 focus:ring-success-500 focus:ring-offset-2 transition">
-                    <span>+ Add Wallet</span>
-                </button>
-
-                @RenderSection("Wallets", required: false)
-            </div>
-
-            <!-- Logout -->
-            <div class="pt-4 mt-auto border-t border-gray-100">
-                <form method="post" asp-controller="Auth" asp-action="Logout">
-                    <button type="submit"
-                        class="w-full flex items-center justify-center px-3 py-2 bg-danger-500 text-white text-sm font-medium rounded-lg hover:bg-danger-600 focus:outline-none focus:ring-2 focus:ring-danger-500 focus:ring-offset-2 transition">
-                        Logout
-                    </button>
-                </form>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="flex-1 p-4 md:p-6">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-                <h1 class="text-2xl font-bold text-gray-900">@ViewData["Title"]</h1>
-                <button id="new-transaction-btn"
-                    class="px-4 py-2 bg-primary-500 text-white text-sm font-medium rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition">
-                    New Transaction
-                </button>
-            </div>
-
-            <div id="main-content" class="bg-white rounded-xl shadow-sm p-4 md:p-6">
-                @RenderBody()
-            </div>
-        </main>
+<!-- Header -->
+<header class="bg-white shadow-sm h-16 flex items-center justify-between px-6">
+    <h1 class="text-xl font-semibold text-gray-800">Clems Finance</h1>
+    <div class="flex items-center space-x-4">
+        <span class="text-sm text-gray-600">Hello, @User.Identity?.Name</span>
+        <form asp-controller="Auth" asp-action="Logout" method="post">
+            <button type="submit"
+                    class="px-3 py-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm font-medium">
+                Logout
+            </button>
+        </form>
     </div>
+</header>
 
-    @RenderSection("Scripts", required: false)
+<!-- Page Body -->
+<main class="flex-1 p-6">
+    @RenderBody()
+</main>
+
+@RenderSection("Scripts", required: false)
 </body>
 </html>

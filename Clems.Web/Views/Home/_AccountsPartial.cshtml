@@ -1,0 +1,51 @@
+﻿@model DashboardViewModel
+
+<!-- Wallets -->
+<section class="bg-white shadow rounded-2xl p-5">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-gray-700">Wallets</h2>
+        <button class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+                onclick="addWallet()">+ Add Wallet</button>
+    </div>
+    <div class="grid sm:grid-cols-2 gap-4">
+        @foreach (var wallet in Model.Wallets)
+        {
+            <div class="wallet-card relative bg-blue-50 p-4 rounded-xl shadow-sm cursor-pointer transition hover:shadow-md"
+                 data-id="@wallet.Id"
+                 data-type="Wallet"
+                 onclick="selectAccount('@wallet.Id','Wallet', this)">
+                <button class="absolute top-2 left-2 text-gray-400 hover:text-blue-500"
+                        onclick="editAccount('@wallet.Id','Wallet','@wallet.Name'); event.stopPropagation();">✎</button>
+                <button class="absolute top-2 right-2 text-gray-400 hover:text-red-500"
+                        onclick="removeWallet('@wallet.Id'); event.stopPropagation();">&times;</button>
+                <h3 class="text-base font-medium text-gray-800">@wallet.Name</h3>
+                <p class="text-2xl font-bold text-blue-700">@wallet.Balance.ToString("C")</p>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- Debts -->
+<section class="bg-white shadow rounded-2xl p-5">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-gray-700">Debts</h2>
+        <button class="px-3 py-1.5 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700"
+                onclick="addDebt()">+ Add Debt</button>
+    </div>
+    <div class="grid sm:grid-cols-2 gap-4">
+        @foreach (var debt in Model.Debts)
+        {
+            <div class="wallet-card relative bg-red-50 p-4 rounded-xl shadow-sm cursor-pointer transition hover:shadow-md"
+                 data-id="@debt.Id"
+                 data-type="Debt"
+                 onclick="selectAccount('@debt.Id','Debt', this)">
+                <button class="absolute top-2 left-2 text-gray-400 hover:text-blue-500"
+                        onclick="editAccount('@debt.Id','Debt','@debt.Name'); event.stopPropagation();">✎</button>
+                <button class="absolute top-2 right-2 text-gray-400 hover:text-red-500"
+                        onclick="removeDebt('@debt.Id'); event.stopPropagation();">&times;</button>
+                <h3 class="text-base font-medium text-gray-800">@debt.Name</h3>
+                <p class="text-2xl font-bold text-red-600">@debt.Amount.ToString("C")</p>
+            </div>
+        }
+    </div>
+</section>

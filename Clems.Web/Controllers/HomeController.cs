@@ -1,53 +1,38 @@
-using System.Diagnostics;
 using Clems.Application.Services;
-using Microsoft.AspNetCore.Mvc;
 using Clems.Web.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Clems.Web.Controllers;
 
 
-public class HomeController : Controller
+[Authorize]
+public class HomeController(    
+    WalletService walletService,
+    DebtService debtService,
+    TransactionService transactionService
+) : Controller
 {
-    private readonly WalletService _walletService;
-    private readonly TransactionService _transactionService;
-
-    public HomeController(WalletService walletService, TransactionService transactionService)
-    {
-        _walletService = walletService;
-        _transactionService = transactionService;
-    }
-
-    [Authorize]
+    [HttpGet("")]
     public async Task<IActionResult> Index()
     {
-        var wallets = await _walletService.FindAllAsync();
-        return View(wallets);
-    }
+        var wallets = await walletService.FindAllAsync();
+        var debts = await debtService.FindAllAsync();
+        var recaps = await transactionService.Recapitulate();
 
-    [HttpGet]
-    public async Task<IActionResult> WalletHistory(Guid walletId)
-    {
-        var history = await _transactionService.History(walletId);
-        return PartialView("_WalletHistory", history);
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> AddTransaction(Guid walletId, decimal amount, string type, string description)
-    {
-        if (type == "Deposit")
-            await _walletService.Deposit(walletId, amount, description);
-        else if (type == "Withdraw")
-            await _walletService.Withdraw(walletId, amount, description);
-
-        var history = await _transactionService.History(walletId);
-        return PartialView("_WalletHistory", history);
+        var vm = new DashboardViewModel(wallets, debts, recaps);
+        return View(vm);
     }
     
-    [HttpPost]
-    public async Task<IActionResult> CreateWallet([FromBody] WalletCreateDto dto)
+    [HttpGet("AccountsPartial")]
+    public async Task<IActionResult> AccountsPartial()
     {
-        var wallet = await _walletService.Create(dto);
-        return Json(new { id = wallet.Id, name = wallet.Name, balance = wallet.Balance.ToString("C") });
+        var wallets = await walletService.FindAllAsync();
+        var debts = await debtService.FindAllAsync();
+        var recaps = await transactionService.Recapitulate();
+
+        var vm = new DashboardViewModel(wallets, debts, recaps);
+        return PartialView("_AccountsPartial", vm);
     }
 }
+

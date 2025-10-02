@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Clems.Infrastructure.Identity;
 
-public class IdentityContext(DbContextOptions<IdentityContext> options) : IdentityDbContext<User, IdentityRole<Guid>, Guid>(options)
+public class IdentityContext(DbContextOptions<IdentityContext> options)
+    : IdentityDbContext<User, IdentityRole<Guid>, Guid>(options)
 {
-    
 }

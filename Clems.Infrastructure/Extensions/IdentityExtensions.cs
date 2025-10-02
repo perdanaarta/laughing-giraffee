@@ -1,11 +1,8 @@
 ﻿using Clems.Domain.Model;
 using Clems.Infrastructure.Data;
 using Clems.Infrastructure.Identity;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Clems.Infrastructure.Extensions;
 
@@ -15,12 +12,12 @@ public static class IdentityExtensions
     {
         builder.Services.AddDbContext<AppDbContext>(options =>
         {
-            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+            options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
         });
-        
+
         builder.Services.AddDbContext<IdentityContext>(options =>
         {
-            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+            options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
         });
 
         builder.Services.AddIdentityCore<User>(options =>

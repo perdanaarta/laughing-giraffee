@@ -1,26 +1,23 @@
 ﻿using Clems.Domain.Abstraction;
-using SharedKernel.Abstraction;
+using Clems.Domain.Event;
 
 namespace Clems.Domain.Model;
 
-public record TransactionAdded(Guid AccountId, decimal Debit, decimal Credit) : IDomainEvent;
-
-
 public abstract class Account : Aggregate
 {
-    public Guid Id { get; protected set; } = Guid.NewGuid();
-    public Guid UserId { get; protected set; }
-    public string Name { get; protected set; }
-    public decimal Balance { get; protected set; }
-
     protected readonly List<Transaction> _transactions = new();
-    public IReadOnlyList<Transaction> Transactions => _transactions.AsReadOnly();
 
     protected Account(Guid userId, string name)
     {
         UserId = userId;
         Name = name;
     }
+
+    public Guid Id { get; protected set; } = Guid.NewGuid();
+    public Guid UserId { get; protected set; }
+    public string Name { get; protected set; }
+    public decimal Balance { get; protected set; }
+    public IReadOnlyList<Transaction> Transactions => _transactions.AsReadOnly();
 
     public void AddTransaction(Transaction transaction)
     {
@@ -29,12 +26,38 @@ public abstract class Account : Aggregate
         AddDomainEvent(new TransactionAdded(Id, transaction.Debit, transaction.Credit));
     }
 
+    public void DeleteTransaction(Guid transactionId)
+    {
+        var tx = _transactions.SingleOrDefault(t => t.Id == transactionId);
+        if (tx == null) return;
+
+        _transactions.Remove(tx);
+
+        // Recalculate from scratch
+        Balance = 0;
+        foreach (var transaction in _transactions)
+            ApplyTransaction(transaction);
+    }
+
+    public void Delete()
+    {
+        AddDomainEvent(new AccountDeleted(Id));
+    }
+
+    public void Update(string name)
+    {
+        Name = name;
+        AddDomainEvent(new AccountModified(Id));
+    }
+
     protected abstract void ApplyTransaction(Transaction transaction);
 }
 
 public class Wallet : Account
 {
-    public Wallet(Guid userId, string name) : base(userId, name) { }
+    public Wallet(Guid userId, string name) : base(userId, name)
+    {
+    }
 
     protected override void ApplyTransaction(Transaction transaction)
     {
@@ -48,14 +71,13 @@ public class Wallet : Account
 
 public class Debt : Account
 {
-    public Debt(Guid userId, string name) : base(userId, name) { }
+    public Debt(Guid userId, string name) : base(userId, name)
+    {
+    }
 
     protected override void ApplyTransaction(Transaction transaction)
     {
         // Liability behavior: Credit increases debt, Debit repays debt
-        Balance += transaction.Credit - transaction.Debit;
-
-        if (Balance > 0)
-            throw new InvalidOperationException("Debt balance cannot be positive (overpaid)");
+        Balance += transaction.Debit - transaction.Credit;
     }
 }

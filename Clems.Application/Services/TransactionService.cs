@@ -2,6 +2,7 @@
 using Clems.Domain.Model;
 using Clems.Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Clems.Application.Services;
@@ -18,11 +19,11 @@ public class TransactionService(AppDbContext dbContext, IHttpContextAccessor con
 
         return Guid.Parse(userIdClaim);
     }
-    
+
     public async Task<List<TransactionHistoryDto>> History(Guid accountId)
     {
         var userId = GetUserId();
-        
+
         var transactions = await dbContext.Transactions
             .Include(t => t.Account)
             .Where(t => t.AccountId == accountId)
@@ -35,10 +36,10 @@ public class TransactionService(AppDbContext dbContext, IHttpContextAccessor con
 
         foreach (var t in transactions)
         {
-            decimal signedAmount = t.Account switch
+            var signedAmount = t.Account switch
             {
-                Wallet => t.Credit - t.Debit,   // +deposit / -withdraw
-                Debt => t.Debit - t.Credit,     // +repayment / -borrowed
+                Wallet => t.Credit - t.Debit, // +deposit / -withdraw
+                Debt => t.Debit - t.Credit, // +repayment / -borrowed
                 _ => t.Credit - t.Debit
             };
 
@@ -56,11 +57,11 @@ public class TransactionService(AppDbContext dbContext, IHttpContextAccessor con
 
         return history;
     }
-    
+
     public async Task<List<TransactionSummaryDto>> Recapitulate()
     {
         var userId = GetUserId();
-        
+
         var accounts = await dbContext.Accounts
             .Include(a => a.Transactions)
             .Where(a => a.UserId == userId)
@@ -73,14 +74,12 @@ public class TransactionService(AppDbContext dbContext, IHttpContextAccessor con
             decimal total = 0;
 
             foreach (var t in account.Transactions)
-            {
                 total += account switch
                 {
                     Wallet => t.Credit - t.Debit,
                     Debt => t.Debit - t.Credit,
                     _ => t.Credit - t.Debit
                 };
-            }
 
             summaries.Add(new TransactionSummaryDto
             {
@@ -110,6 +109,6 @@ public class TransactionSummaryDto
     public Guid AccountId { get; set; }
     public string AccountType { get; set; }
     public decimal TotalChange { get; set; } // total +/- over all transactions
-    public decimal Balance { get; set; }     // current balance
+    public decimal Balance { get; set; } // current balance
     public int TransactionCount { get; set; }
 }

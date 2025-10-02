@@ -16,7 +16,7 @@ builder.AddApplicationServices();
 builder.AddIdentityServices();
 
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddUnitOfWork();
 builder.AddAppSwagger();
 builder.AddAppAuth();
 

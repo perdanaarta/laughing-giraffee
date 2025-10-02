@@ -2,4 +2,4 @@
 
 namespace Clems.Domain.Event;
 
-public record UserCreatedEvent(Guid UserId) : IDomainEvent;
+public record UserCreated(Guid UserId) : IDomainEvent;

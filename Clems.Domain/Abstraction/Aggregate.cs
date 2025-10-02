@@ -2,7 +2,7 @@ using SharedKernel.Abstraction;
 
 namespace Clems.Domain.Abstraction;
 
-public class Aggregate()
+public class Aggregate
 {
     private readonly List<IDomainEvent> _domainEvents = new();
     public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();

@@ -1,0 +1,23 @@
+﻿@model List<Clems.Application.Services.WalletDto>
+@{
+    ViewData["Title"] = "Wallets";
+}
+
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold">My Wallets</h2>
+    <a asp-action="Create" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">+ Add Wallet</a>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    @foreach (var wallet in Model)
+    {
+        <div class="bg-white p-4 rounded-lg shadow">
+            <h3 class="text-lg font-semibold">@wallet.Name</h3>
+            <p class="text-gray-600">Balance: <span class="font-bold">@wallet.Balance</span></p>
+            <div class="mt-3 flex space-x-3">
+                <a asp-action="Details" asp-route-id="@wallet.Id" class="text-blue-600 hover:underline">View</a>
+                <a asp-action="Delete" asp-route-id="@wallet.Id" class="text-red-600 hover:underline">Delete</a>
+            </div>
+        </div>
+    }
+</div>
