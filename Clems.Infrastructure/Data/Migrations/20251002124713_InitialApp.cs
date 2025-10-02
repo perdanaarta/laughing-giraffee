@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Clems.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Account : Migration
+    public partial class InitialApp : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,11 +15,11 @@ namespace Clems.Infrastructure.Data.Migrations
                 name: "Accounts",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Balance = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    AccountType = table.Column<string>(type: "character varying(8)", maxLength: 8, nullable: false)
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    UserId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Balance = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false),
+                    AccountType = table.Column<string>(type: "TEXT", maxLength: 8, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -30,12 +30,12 @@ namespace Clems.Infrastructure.Data.Migrations
                 name: "Transactions",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Credit = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    Debit = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
-                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    AccountId = table.Column<Guid>(type: "uuid", nullable: false)
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Credit = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false),
+                    Debit = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: false),
+                    Date = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    AccountId = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -6,9 +6,30 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Clems.Infrastructure.Extensions;
 
-public static class IdentityExtensions
+public static class InfrastructureExtensions
 {
-    public static void AddIdentityServices(this WebApplicationBuilder builder)
+    public static void ApplyDatabaseMigrations(this WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+        var services = scope.ServiceProvider;
+
+        try
+        {
+            var appDb = services.GetRequiredService<AppDbContext>();
+            appDb.Database.Migrate(); // Auto-migrate AppDbContext
+
+            var identityDb = services.GetRequiredService<IdentityContext>();
+            identityDb.Database.Migrate(); // Auto-migrate IdentityContext
+        }
+        catch (Exception ex)
+        {
+            // Log the error properly in real apps
+            Console.WriteLine($"Migration failed: {ex.Message}");
+            throw;
+        }
+    }
+    
+    public static void AddInfrastructures(this WebApplicationBuilder builder)
     {
         builder.Services.AddDbContext<AppDbContext>(options =>
         {

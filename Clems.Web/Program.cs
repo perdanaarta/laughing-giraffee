@@ -13,7 +13,7 @@ CultureInfo.DefaultThreadCurrentUICulture = culture;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddApplicationServices();
-builder.AddIdentityServices();
+builder.AddInfrastructures();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddUnitOfWork();
@@ -21,6 +21,8 @@ builder.AddAppSwagger();
 builder.AddAppAuth();
 
 var app = builder.Build();
+
+app.ApplyDatabaseMigrations();
 
 if (!app.Environment.IsDevelopment())
 {
@@ -42,6 +44,5 @@ app.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
-
 
 app.Run();
