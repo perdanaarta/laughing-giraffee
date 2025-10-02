@@ -15,6 +15,6 @@ Repositori ini berisi solusi .sln dengan struktur sebagai berikut:
 ```shell
 git clone https://github.com/perdanaarta/laughing-giraffee.git perdanaarta
 cd perdanaarta
-dotnet --project Clems.Web
+dotnet run --project Clems.Web
 ```
 
